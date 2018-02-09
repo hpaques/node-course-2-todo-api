@@ -1,12 +1,16 @@
 const expect = require('expect');
 const request = require('supertest');
+const {ObjectID} = require('mongodb');
 
 const {app} = require('./../server');
 const {Todo} = require('./../models/todo');
 
+// Data to be included in the DB
 const todos = [{
+    _id: new ObjectID(),
     text: 'First test todo'
 },{
+    _id: new ObjectID(),
     text: 'Second test todo'
 }];
 
@@ -14,6 +18,7 @@ const todos = [{
 beforeEach((done) => {
     // Clean up the Todo collection
     Todo.remove({}).then(()=> {
+        // Insert data in the DB
         return Todo.insertMany(todos);
     }). then(() => done());
 });
@@ -71,4 +76,41 @@ describe('GET /todos', () => {
             })
             .end(done);
     });
+});
+
+describe('GET /todos/:id', () => {
+  // test cases --> async:
+  it('should return todo doc', (done) => {
+
+    // supertest request
+    request(app)
+      .get(`/todos/${todos[0]._id.toHexString()}`)
+      .expect(200) // status return: OK
+      .expect((res) => {
+        // check if text return is the same as expected
+        expect(res.body.todo.text).toBe(todos[0].text);
+      })
+      .end(done);
+  });
+
+  it('should return a 404 if todo not found', (done) => {
+
+    // Create a new _id here, and using toHexString, make the assertion
+    var id = new ObjectID();
+
+    // make sure to get a 404 back
+    request(app)
+      .get(`/todos/${id.toHexString()}`)
+      .expect(404)
+      .end(done);
+  });
+
+  it('it should return 404 for non-object ids', (done) => {
+    // todos /123
+    request(app)
+      .get('/todos/123')
+      .expect(404)
+      .end(done);
+  });
+
 });
