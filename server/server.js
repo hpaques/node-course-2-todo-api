@@ -1,7 +1,6 @@
 
 var express = require('express');
 var bodyParser = require('body-parser');
-
 const {ObjectID} = require('mongodb');
 
 var {mongoose} = require('./db/mongoose');
@@ -9,6 +8,11 @@ var {Todo} = require('./models/todo');
 var {User} = require('./models/user');
 
 var app = express();
+
+// setup PORT variable
+//    if 'process.env.PORT' is avail, we use it
+//    otherwise, use 3000
+const port = process.env.PORT || 3000;
 
 // middleware
 app.use(bodyParser.json());
@@ -56,8 +60,8 @@ app.get('/todos/:id', (req, res) => {
   });
 });
 
-app.listen(3000, () => {
-    console.log('Started on PORT 3000');
+app.listen(port, () => {
+    console.log(`Started on PORT ${port}`);
 });
 
 module.exports = {app};
