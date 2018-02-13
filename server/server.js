@@ -1,3 +1,5 @@
+require('./config/config');
+
 const _ = require('lodash');
 const express = require('express');
 const bodyParser = require('body-parser');
@@ -12,7 +14,7 @@ var app = express();
 // setup PORT variable
 //    if 'process.env.PORT' is avail, we use it
 //    otherwise, use 3000
-const port = process.env.PORT || 3000;
+const port = process.env.PORT;
 
 // middleware
 app.use(bodyParser.json());
