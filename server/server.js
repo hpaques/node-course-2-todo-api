@@ -17,6 +17,7 @@ const port = process.env.PORT || 3000;
 // middleware
 app.use(bodyParser.json());
 
+// POST ROUTE
 app.post('/todos', (req, res) => {
     var todo = new Todo({
         text: req.body.text
@@ -29,6 +30,7 @@ app.post('/todos', (req, res) => {
     });
 });
 
+// GET ALL ROUTE
 app.get('/todos', (req, res) => {
     Todo.find().then((todos) => {
         res.send({todos});
@@ -37,6 +39,7 @@ app.get('/todos', (req, res) => {
     })
 });
 
+// GET by ID ROUTE
 app.get('/todos/:id', (req, res) => {
   var id = req.params.id;
 
@@ -84,6 +87,11 @@ app.patch('/todos/:id', (req,res) => {
   var id = req.params.id;
   var body = _.pick(req.body, ['text'],['completed']);
 
+  // console.log('PATCH');
+  // console.log('req.body:',req.body);
+  // console.log('body:',body);
+  // console.log('id:',id);
+
   if (!ObjectID.isValid(id)){
     return res.status(404).send();
   }
@@ -100,7 +108,7 @@ app.patch('/todos/:id', (req,res) => {
     if (!todo) {
       return res.status(404).send();
     }
-
+    // console.log('return',todo);
     res.send({todo});
   }).catch((e) => {
     res.status(400).send();
