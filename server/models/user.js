@@ -32,6 +32,7 @@ var UserSchema = new mongoose.Schema({
     }]
 });
 
+// Creating INSTANCEs methods, using the keyword '.methods'
 // Overriding method to determine what to return to the user in the JSON object
 UserSchema.methods.toJSON = function () {
   var user = this;
@@ -54,6 +55,29 @@ UserSchema.methods.generateAuthToken = function() {
   return user.save().then(() => {
     return token;
   });
+};
+
+// Creating a model method, using the key word '.statics'
+UserSchema.statics.findByToken = function(token) {
+  var User = this;
+  var decoded;
+
+  try {
+    decoded = jwt.verify(token, 'abc123');
+  } catch(e) {
+    // return new Promise((resolve, reject) => {
+    //   reject();
+    // });
+
+    // the line below does the same as the code above
+    return Promise.reject();
+  }
+
+  return User.findOne({
+    '_id': decoded._id,
+    'tokens.token': token, // this allows us to query a token value within the array of tokens
+    'tokens.access': 'auth' // samething here, searching for 'auth' in the tokens.access array
+  })
 };
 
 var User = mongoose.model('User', UserSchema);

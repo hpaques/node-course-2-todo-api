@@ -12,6 +12,7 @@ const {ObjectID} = require('mongodb');
 var {mongoose} = require('./db/mongoose');
 var {Todo} = require('./models/todo');
 var {User} = require('./models/user');
+var {authenticate} = require('./middleware/authenticate');
 
 var app = express();
 
@@ -161,6 +162,40 @@ app.post('/users', (req,res) => {
     res.status(400).send(e);
   });
 });
+
+app.get('/user/me', authenticate, (req, res) => {
+  // This route user a middleware that will authenticate the user before going forward
+  //  via the 'authenticate' middleware.
+  res.send(req.user);
+});
+
+// // -------
+// // example
+// // -------
+// app.get('/user/me', authenticate, (req, res) => {
+//   // to get some property from the header in req, we just need to pass the key.
+//   // In this case, we pass 'x-auth', and we get back that token that we will need
+//   // to verify.
+//   var token = req.header('x-auth');
+//
+//   User.findByToken(token).then((user) => {
+//     if(!user){
+//       // We could the code below, which is the same as the return statement
+//       //  under the 'catch'
+//       //
+//       //    res.status(401).send();
+//       //
+//       // A simpler way to do that, we also resturn a Promise reject here, which
+//       //  will also be catched by the 'catch' statement, and return the samething
+//       //  as the above code.
+//       return Promise.reject();
+//     }
+//     res.send(user);
+//   }).catch((e) => {
+//     res.status(401).send(); // Authentication is required
+//   });
+//
+// });
 
 // ------------------------
 app.listen(port, () => {
