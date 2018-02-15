@@ -163,7 +163,7 @@ app.post('/users', (req,res) => {
   });
 });
 
-app.get('/user/me', authenticate, (req, res) => {
+app.get('/users/me', authenticate, (req, res) => {
   // This route user a middleware that will authenticate the user before going forward
   //  via the 'authenticate' middleware.
   res.send(req.user);
