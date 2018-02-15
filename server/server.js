@@ -164,9 +164,28 @@ app.post('/users', (req,res) => {
 });
 
 app.get('/users/me', authenticate, (req, res) => {
-  // This route user a middleware that will authenticate the user before going forward
+  // This route uses a middleware that will authenticate the user before going forward
   //  via the 'authenticate' middleware.
   res.send(req.user);
+});
+
+// -------
+// POST /users/login {email, password}
+//  ROUTE To handle user login
+// -------
+app.post('/users/login', (req, res) => {
+  var body = _.pick(req.body, ['email', 'password']);
+
+  User.findByCredentials(body.email, body.password).then((user) => {
+    // the case where user is not found will be handled by 'catch'
+    // 'catch' will also address any problems with 'generareAuthToken' - that is
+    // why we use a 'return' for 'user.generateAuthToken'
+    return user.generateAuthToken().then((token) => {
+      res.header('x-auth', token).send(user);
+    });
+  }).catch((e) => {
+    res.status(400).send();
+  });
 });
 
 // // -------

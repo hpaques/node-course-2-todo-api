@@ -58,7 +58,9 @@ UserSchema.methods.generateAuthToken = function() {
   });
 };
 
+// ------
 // Creating a model method, using the key word '.statics'
+// ------
 UserSchema.statics.findByToken = function(token) {
   var User = this;
   var decoded;
@@ -79,6 +81,31 @@ UserSchema.statics.findByToken = function(token) {
     'tokens.token': token, // this allows us to query a token value within the array of tokens
     'tokens.access': 'auth' // samething here, searching for 'auth' in the tokens.access array
   })
+};
+
+// ------
+// Method: findByCredentials
+// ------
+UserSchema.statics.findByCredentials = function (email, password) {
+  var User = this;
+  return User.findOne({email}).then((user) => {
+    if (!user){
+      return Promise.reject();
+    }
+
+    return new Promise((resolve, reject) => {
+      // use bcrypt.compare to compare password and user.password
+      bcrypt.compare(password, user.password, (err, res) => {
+        // if password does not match, then reject
+        if(!res){
+          return reject();
+        }
+        // if password matched, then return user.
+        return resolve(user);
+      });
+
+    });
+  });
 };
 
 // -----

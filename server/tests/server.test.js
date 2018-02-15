@@ -252,8 +252,9 @@ describe('POST /users', () => {
     request(app)
       .post('/users')
       .send({
-        email: 'and',
-        password: '123'
+        // email: 'and',
+        email: 'henriqueexample.com',
+        password: '123456_'
       })
       .expect(400)
       .end(done);
@@ -268,6 +269,7 @@ describe('POST /users', () => {
       .post('/users')
       .send({
         email: users[0].email,
+        // email: 'henrique@example.com',
         password: 'password123!'
       })
       .expect(400)
