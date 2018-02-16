@@ -344,3 +344,36 @@ describe('POST /users/login', () => {
       })
   });
 });
+
+// -------
+// Test Cases for DELETE /users/me/tokens
+//  --> Removing a token from the user - logout
+// -------
+describe('DELETE /users/me/token', () => {
+  it('should remove auth token on logout', (done) => {
+
+    // DELETE /users/me/tokens
+    // Set x-auth equal to token (from the seed data)
+    // 200
+    // add an async end call, which will do the following:
+    //  find user in the DB, verify that tokens arrays has length of zero
+    request(app)
+      .delete('/users/me/token')
+      .set('x-auth', users[0].tokens[0].token)
+      .send({
+        email: users[0].email,
+        password: users[0].password
+      })
+      .expect(200)
+      .end((err,res) => {
+        if(err){
+          return done(err);
+        }
+
+        User.findById(users[0]._id).then((user) => {
+          expect(user.tokens.length).toBe(0);
+          done();
+        }).catch((e) => done(e));
+      })
+  });
+});
