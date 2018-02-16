@@ -33,6 +33,8 @@ var UserSchema = new mongoose.Schema({
     }]
 });
 
+// ----------- INSTANCE METHODS ------------ //
+
 // Creating INSTANCEs methods, using the keyword '.methods'
 // Overriding method to determine what to return to the user in the JSON object
 UserSchema.methods.toJSON = function () {
@@ -57,6 +59,19 @@ UserSchema.methods.generateAuthToken = function() {
     return token;
   });
 };
+
+// Remove a token from the user
+UserSchema.methods.removeToken = function(token) {
+  var user = this;
+
+  return user.update({
+    $pull: {
+      tokens: {token}
+    }
+  })
+};
+
+// ----------- MODEL METHODS ------------ //
 
 // ------
 // Creating a model method, using the key word '.statics'
